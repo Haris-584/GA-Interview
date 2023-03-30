@@ -1,0 +1,36 @@
+version: '3'
+services:
+
+#  *****************   Database
+  sql-db:
+    image: "mysql/mysql-server"
+    container_name: sql-db
+    # Ignored for now
+    # volumes:
+    #   - 
+    ports:
+      - 8080:8080
+    environment:
+      - SQL_DB:SOFY
+      - SQL_USER:SOFY
+      - SQL_PASSWORD:SOFY_PASS
+
+#  *****************   Backend Node App
+  node-app:
+    build: ./node
+    container_name: node-app
+    environment:
+      - DB_SERVER=sql-db
+    ports:
+      - 4100:4100         # container and external port both 4200
+    links:
+      - sql-db
+
+#  *****************   Frondend Angular
+  angular:
+    build: ./angular
+    container_name: angular
+    ports:
+      - 4200:80         #contianer port 80 bind with ext 4200
+    links:
+      - node-app
